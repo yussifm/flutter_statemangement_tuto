@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cubit "),
+        title: const Text("Cubit "),
       ),
       body: StreamBuilder<String?>(
           stream: cubit.stream,
@@ -75,14 +75,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 return button;
 
               case ConnectionState.active:
-                return Column(
-                  children: [
-                    Text(snapshot.data ?? ""),
-                    const SizedBox(
-                      height: 6,
-                    ),
-                    button
-                  ],
+                return Center(
+                  child: Column(
+                    children: [
+                      Text(snapshot.data ?? ""),
+                      const SizedBox(
+                        height: 6,
+                      ),
+                      button
+                    ],
+                  ),
                 );
 
               case ConnectionState.done:
