@@ -19,18 +19,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Fisrt Bloc Example'),
+      home: BlocProvider(
+          create: ((_) => PersonBloc()),
+          child: const MyHomePage(title: 'Fisrt Bloc Example')),
     );
   }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 enum PersonUrl {
@@ -94,6 +87,9 @@ class FetchResult {
     required this.persons,
     required this.isRetrievedFromCache,
   });
+  @override
+  String toString() =>
+      'FetchResult (isRetrievedFromCache = $isRetrievedFromCache, person = $persons)';
 }
 
 @immutable
@@ -107,6 +103,40 @@ class LoadPersonsAction extends LoadAction {
   const LoadPersonsAction({required this.url}) : super();
 }
 
+class PersonBloc extends Bloc<LoadAction, FetchResult?> {
+  final Map<PersonUrl, Iterable<Person>> _cache = {};
+  PersonBloc() : super(null) {
+    on<LoadPersonsAction>((event, emit) async {
+      final url = event.url;
+      if (_cache.containsKey(url)) {
+        final cachedPersons = _cache[url]!;
+        final result =
+            FetchResult(persons: cachedPersons, isRetrievedFromCache: true);
+        emit(result);
+      } else {
+        final persons = await getPersons(url: url.urlString);
+        _cache[url] = persons;
+        final result =
+            FetchResult(persons: persons, isRetrievedFromCache: false);
+        emit(result);
+      }
+    });
+  }
+}
+
+extension Subscript<T> on Iterable<T> {
+  T? operator [](int index) => length > index ? elementAt(index) : null;
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
@@ -114,7 +144,51 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: const Center(),
+      body: Center(
+        child: Column(
+          children: [
+            Row(
+              children: [
+                TextButton(
+                    onPressed: () {
+                      context
+                          .read<PersonBloc>()
+                          .add(const LoadPersonsAction(url: PersonUrl.person1));
+                    },
+                    child: const Text("Load Data 1")),
+                TextButton(
+                    onPressed: () {
+                      context
+                          .read<PersonBloc>()
+                          .add(const LoadPersonsAction(url: PersonUrl.person2));
+                    },
+                    child: const Text("Load Data 2")),
+              ],
+            ),
+            BlocBuilder<PersonBloc, FetchResult?>(
+                buildWhen: (previousResult, currentResult) {
+              return previousResult?.persons != currentResult?.persons;
+            }, builder: ((context, fetchResultState) {
+              final persons = fetchResultState?.persons;
+              if (persons == null) {
+                return const SizedBox(
+                  child: Text("No data"),
+                );
+              }
+              return Expanded(
+                child: ListView.builder(
+                    itemCount: persons.length,
+                    itemBuilder: ((context, index) {
+                      final person = persons[index]!;
+                      return ListTile(
+                        title: Text(person.name),
+                      );
+                    })),
+              );
+            }))
+          ],
+        ),
+      ),
     );
   }
 }
