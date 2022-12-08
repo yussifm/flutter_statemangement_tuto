@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vanilla_state/contact_book.dart';
+import 'package:vanilla_state/new_contact_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,14 +12,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter Vanila state Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Home Page'),
+      routes: {
+        newContactRouteName: (context) => const NewContactView(),
+      },
     );
   }
 }
+
+ContactBooks contactBook = ContactBooks();
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -29,37 +36,24 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
+      body: ListView.builder(
+          itemCount: contactBook.length,
+          itemBuilder: ((context, index) {
+            final contact = contactBook.contactAtIndex(atIndex: index);
+            return ListTile(
+              title: Text(contact!.name),
+            );
+          })),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: () async {
+          await Navigator.of(context).pushNamed(newContactRouteName);
+        },
         child: const Icon(Icons.add),
       ),
     );
