@@ -11,8 +11,17 @@ class BreadCrumbWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      children: breadCrumb.map((breadcrumb) {
-        return Text(breadcrumb.title);
+      children: breadCrumb.map((
+        breadcrumb,
+      ) {
+        return InkWell(
+          onTap: () {},
+          child: Text(
+            breadcrumb.title,
+            style: TextStyle(
+                color: breadcrumb.isActive ? Colors.blue : Colors.black),
+          ),
+        );
       }).toList(),
     );
   }

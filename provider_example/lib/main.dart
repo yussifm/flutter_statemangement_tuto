@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:provider_example/bread_crumb_provider.dart';
+import 'package:provider_example/breadcrumb_widget.dart';
 import 'package:provider_example/create_new_crumb.dart';
 
 void main() {
@@ -42,20 +43,30 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Column(
         children: [
-          TextButton(
-              onPressed: (() {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: ((context) => const CreateNewCrumb())));
-              }),
-              child: const Text('Add new bread crumb')),
+          Consumer<BreadCrumbProvider>(builder: ((context, value, child) {
+            return BreadCrumbWidget(breadCrumb: value.items);
+          })),
+          const SizedBox(
+            height: 10,
+          ),
+          Center(
+            child: TextButton(
+                onPressed: (() {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: ((context) => const CreateNewCrumb())));
+                }),
+                child: const Text('Add new bread crumb')),
+          ),
           const SizedBox(
             height: 30,
           ),
-          TextButton(
-              onPressed: () {
-                context.read<BreadCrumbProvider>().reset();
-              },
-              child: const Text("Reset"))
+          Center(
+            child: TextButton(
+                onPressed: () {
+                  context.read<BreadCrumbProvider>().reset();
+                },
+                child: const Text("Reset")),
+          )
         ],
       ),
     );

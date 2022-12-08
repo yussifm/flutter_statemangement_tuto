@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:provider_example/bread_crub.dart';
+
+import 'bread_crumb_provider.dart';
 
 class CreateNewCrumb extends StatefulWidget {
   const CreateNewCrumb({super.key});
@@ -35,7 +39,16 @@ class _CreateNewCrumbState extends State<CreateNewCrumb> {
           const SizedBox(
             height: 50,
           ),
-          TextButton(onPressed: (() {}), child: const Text("Add crumb"))
+          TextButton(
+              onPressed: (() {
+                if (_textControllr.text.isNotEmpty) {
+                  context.read<BreadCrumbProvider>().add(
+                      breadcrumb: BreadCrumb(
+                          isActive: false, name: _textControllr.text));
+                  Navigator.of(context).pop();
+                }
+              }),
+              child: const Text("Add crumb"))
         ],
       ),
     );
