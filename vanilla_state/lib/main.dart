@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vanilla_state/contact_book.dart';
+import 'package:vanilla_state/contact_model.dart';
 import 'package:vanilla_state/new_contact_view.dart';
 
 void main() {
@@ -41,15 +42,27 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        centerTitle: true,
       ),
-      body: ListView.builder(
-          itemCount: contactBook.length,
-          itemBuilder: ((context, index) {
-            final contact = contactBook.contactAtIndex(atIndex: index);
-            return ListTile(
-              title: Text(contact!.name),
-            );
-          })),
+      body: ValueListenableBuilder(
+          valueListenable: ContactBooks(),
+          builder: (context, value, child) {
+            final contacts = value;
+            return ListView.builder(
+                itemCount: contactBook.length,
+                itemBuilder: ((context, index) {
+                  final contact = contacts[index];
+                  return Dismissible(
+                    key: ValueKey(contact.id),
+                    onDismissed: (direction) {
+                      contacts.remove(contact);
+                    },
+                    child: ListTile(
+                      title: Text(contact.name),
+                    ),
+                  );
+                }));
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await Navigator.of(context).pushNamed(newContactRouteName);
