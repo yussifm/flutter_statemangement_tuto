@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:provider_example/bread_crumb_provider.dart';
+import 'package:provider_example/create_new_crumb.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (context) => BreadCrumbProvider(), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -10,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Provider State demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -35,6 +39,24 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          TextButton(
+              onPressed: (() {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: ((context) => const CreateNewCrumb())));
+              }),
+              child: const Text('Add new bread crumb')),
+          const SizedBox(
+            height: 30,
+          ),
+          TextButton(
+              onPressed: () {
+                context.read<BreadCrumbProvider>().reset();
+              },
+              child: const Text("Reset"))
+        ],
       ),
     );
   }
