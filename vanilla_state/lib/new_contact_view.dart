@@ -46,10 +46,12 @@ class _NewContactViewState extends State<NewContactView> {
             height: 50,
           ),
           TextButton(
-              onPressed: () {
-                final contact = ContactModel(name: _txtController.text);
-                ContactBooks().add(contact: contact);
-                Navigator.of(context).pop();
+              onPressed: () async {
+                if (_txtController.text.isNotEmpty) {
+                  final contact = ContactModel(name: _txtController.text);
+                  ContactBooks().add(contact: contact);
+                  Navigator.of(context).pop();
+                }
               },
               child: const Text('Add contacts'))
         ],

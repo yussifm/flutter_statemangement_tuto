@@ -49,16 +49,19 @@ class _MyHomePageState extends State<MyHomePage> {
           builder: (context, value, child) {
             final contacts = value;
             return ListView.builder(
-                itemCount: contactBook.length,
+                itemCount: contacts.length,
                 itemBuilder: ((context, index) {
                   final contact = contacts[index];
                   return Dismissible(
                     key: ValueKey(contact.id),
                     onDismissed: (direction) {
-                      contacts.remove(contact);
+                      ContactBooks().remove(contact: contact);
                     },
                     child: ListTile(
-                      title: Text(contact.name),
+                      title: Text(
+                        contact.name,
+                        style: const TextStyle(color: Colors.black),
+                      ),
                     ),
                   );
                 }));

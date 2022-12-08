@@ -24,9 +24,10 @@ class ContactBooks extends ValueNotifier<List<ContactModel>> {
     if (contacts.contains(contact)) {
       contacts.remove(contact);
       notifyListeners();
+
+      // _contacts.remove(contact);
+      // notifyListeners();
     }
-    // _contacts.remove(contact);
-    // notifyListeners();
   }
 
   ContactModel? contactAtIndex({required int atIndex}) {
