@@ -27,6 +27,7 @@ const names = [
   'Fred',
   'Larry',
   'Razak',
+  'Waris',
 ];
 
 final tickerProvider = StreamProvider(
